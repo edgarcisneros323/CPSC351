@@ -1,8 +1,15 @@
 
-#include<bits/stdc++.h>
+//#include<bits/stdc++.h>
 #include <fstream>
 #include <iostream>
+#include <algorithm>
 #include <string>
+#include <stdlib.h>
+#include <stdlib.h>
+#include <vector>
+#include <cstdlib>
+#include <stdio.h>
+
 
 using namespace std;
 
@@ -107,60 +114,106 @@ int RRaverageWaitTime(Process listOfProc[], int n)
   return averageWait;
 }
 
-/*void genListOfProcess(){
-  ofstream file;
-  file.open ("genListOfProcess.txt");
-  file << "Please writr this text to a file.\n this text is written using C++\n";
-  file.close();
-
-}*/
-
-
-
-
-int main()
+void genListOfProcess(Process listOfProc[], int randomNumberOfProcesses)
 {
-    // examples
-    Process listOfProc[] = {{"P1", 21, 2}, {"P2", 3, 1}, {"P3", 6, 4}, {"P4", 2, 3}};
-    int n = sizeof listOfProc / sizeof listOfProc[0];
+  ofstream file;
+  file.open ("genListOfProcess.txt", ios::out | ios::trunc);
+  string processID;
+  int bust_time = 0; 
+  int priority_level = 0;
 
-    /*
-    Average waiting time for FCFS
-    */
-    int FCFS = averageWaitTime(listOfProc, n);
-    cout << "Average waiting time for FCFS "
-         << FCFS << endl;
+  for (int i = 0; i < randomNumberOfProcesses; i++){
+    processID = "P" + to_string(i+1);
+    bust_time = rand() % 50 + 1;
+    priority_level = rand() % 5 + 1;
+    listOfProc[i] = {processID, bust_time, priority_level};
+    file << processID << ", " << bust_time
+         << ", " << priority_level << endl;
+  }
+  file.close();
+}
 
-    /*
-    Average waiting time for SJF
-    */
-    sort(listOfProc, listOfProc + n, priority); //sort in order of priority
-    int PRIOR = averageWaitTime(listOfProc, n);
-    cout << "Average waiting time for Priority "
-         << PRIOR << endl;
+void calculate(Process listOfProc[], int n){
 
-    /*
-    Average waiting time for SJF
-    */
-    sort(listOfProc, listOfProc + n, burstTime); //sort in order of shortest bt first
-    int SJF = averageWaitTime(listOfProc, n);
-    cout << "Average waiting time for SJF (non-preemtive) "
-         << SJF << endl;
+      /*
+      Average waiting time for FCFS
+      */
+      int FCFS = averageWaitTime(listOfProc, n);
+      cout << "Average waiting time for FCFS "
+           << FCFS << endl;
 
-    /*
-    Average waiting time for RR
-    */
-    int RR = RRaverageWaitTime(listOfProc, n);
-    cout << "Average waiting time for RR "
-         << RR << endl;
+      /*
+      Average waiting time for SJF
+      */
+      sort(listOfProc, listOfProc + n, priority); //sort in order of priority
+      int PRIOR = averageWaitTime(listOfProc, n);
+      cout << "Average waiting time for Priority "
+           << PRIOR << endl;
 
-    /*
-    Find the process scheduling algorithm with minimum average waiting time
-    */
-    Scheduling scheduling[] = {{"FCFS", FCFS}, {"PRIOR", PRIOR}, {"SJF", SJF}, {"RR", RR}};
-    int m = sizeof scheduling / sizeof scheduling[0];
-    sort(scheduling, scheduling + m, sorfAvgWait); //sort in order of averageWaitTime
-    cout << "Thus, the " << scheduling[0].type
-         << " policy results the minimum average waiting time." << endl;
+      /*
+      Average waiting time for SJF
+      */
+      sort(listOfProc, listOfProc + n, burstTime); //sort in order of shortest bt first
+      int SJF = averageWaitTime(listOfProc, n);
+      cout << "Average waiting time for SJF (non-preemtive) "
+           << SJF << endl;
+
+      /*
+      Average waiting time for RR
+      */
+      int RR = RRaverageWaitTime(listOfProc, n);
+      cout << "Average waiting time for RR "
+           << RR << endl;
+
+      /*
+      Find the process scheduling algorithm with minimum average waiting time
+      */
+      Scheduling scheduling[] = {{"FCFS", FCFS}, {"PRIOR", PRIOR}, {"SJF", SJF}, {"RR", RR}};
+      int m = sizeof scheduling / sizeof scheduling[0];
+      sort(scheduling, scheduling + m, sorfAvgWait); //sort in order of averageWaitTime
+      cout << "Thus, the " << scheduling[0].type
+           << " policy results the minimum average waiting time." << endl;
+}
+
+
+
+
+int main(int argc, char *argv[])
+{
+
+    if (argc == 2){
+      ifstream infile(argv[1]);
+      char c;
+      int countLines = 0;
+      //infile.open(argv[1]);
+      if(infile.fail()){
+        cout << endl << argv[1] << " not found." << endl;
+        exit(1);
+      }
+      while (infile.get(c)){
+        //infile >> c;
+        if (c == '\n'){
+          countLines = countLines + 1;
+        }
+      }
+      Process listOfProc[countLines];
+      while (infile){
+        int num = 0;
+        infile >> listOfProc[num].id;
+        infile >> listOfProc[num].bt;
+        infile >> listOfProc[num].pr;
+        num++;
+      }
+      int n = sizeof listOfProc / sizeof listOfProc[0];
+      calculate(listOfProc, n);
+      infile.close();
+    }
+      else{
+        int randomNumberOfProcesses = rand() % 4 + 2;
+        Process listOfProc[randomNumberOfProcesses];
+        genListOfProcess(listOfProc, randomNumberOfProcesses);
+        int n = sizeof listOfProc / sizeof listOfProc[0];
+        calculate(listOfProc, n);
+      }
     return 0;
 }
