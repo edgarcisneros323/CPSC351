@@ -4,7 +4,6 @@
 #include <iostream>
 #include <string>
 #include <stdlib.h>
-#include <stdlib.h>
 #include <vector>
 #include <cstdlib>
 #include <sstream>
@@ -32,12 +31,13 @@ void* ThreadSearch(void* args) {
      threadFound++;
    }
    pthread_mutex_unlock(&mutex);
+   return NULL;
 }
 
 int main(int argc, char *argv[]) {
 
   if (argc != 4) {
-    cout << "There are not enough arguments to continue";
+    cout << "There are not enough arguments to continue" << endl;
     exit(-1);
   }
   else{
@@ -68,8 +68,9 @@ int main(int argc, char *argv[]) {
     for (int i = 0; i < numOfThreads; i++) {
        pthread_join(thread[i], NULL);
     }
-    cout << "The " << key << "string has been found by "
-      << threadFound << "threads, there are " << subStringNum << "occurrences for the sub-string." << endl;
+    cout << "The " << key << " string has been found by "
+      << threadFound << " threads, there are " << subStringNum
+      << " occurrences for the sub-string." << endl;
   }
 
   return 0;
