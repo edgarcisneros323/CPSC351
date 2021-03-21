@@ -3,3 +3,8 @@ Average wait time for SJF 25
 Average wait time for RR 69
 Average wait time for Priority 34
 Thus, the SJF policy results the minimum average waiting time.
+Average wait time for FCFS 44
+Average wait time for SJF 25
+Average wait time for RR 69
+Average wait time for Priority 34
+Thus, the SJF policy results the minimum average waiting time.
