@@ -9,6 +9,7 @@
 #include <vector>
 #include <cstdlib>
 #include <stdio.h>
+#include <sstream>
 
 
 using namespace std;
@@ -119,15 +120,17 @@ void genListOfProcess(Process listOfProc[], int randomNumberOfProcesses)
   ofstream file;
   file.open ("genListOfProcess.txt", ios::out | ios::trunc);
   string processID;
-  int bust_time = 0; 
+  int burst_time = 0;
   int priority_level = 0;
-
+  srand (time(0));
   for (int i = 0; i < randomNumberOfProcesses; i++){
     processID = "P" + to_string(i+1);
-    bust_time = rand() % 50 + 1;
+    burst_time = rand() % 50 + 1;
     priority_level = rand() % 5 + 1;
-    listOfProc[i] = {processID, bust_time, priority_level};
-    file << processID << ", " << bust_time
+    listOfProc[i].id = processID;
+    listOfProc[i].bt = burst_time;
+    listOfProc[i].pr = priority_level;
+    file << processID << ", " << burst_time
          << ", " << priority_level << endl;
   }
   file.close();
@@ -183,32 +186,36 @@ int main(int argc, char *argv[])
 
     if (argc == 2){
       ifstream infile(argv[1]);
-      char c;
-      int countLines = 0;
-      //infile.open(argv[1]);
       if(infile.fail()){
-        cout << endl << argv[1] << " not found." << endl;
+        cout << argv[1] << " not found." << endl;
         exit(1);
       }
-      while (infile.get(c)){
-        //infile >> c;
-        if (c == '\n'){
-          countLines = countLines + 1;
-        }
+      string inputLine;
+      string ProcID;
+      int ProcBurstTime, ProcPriority;
+      string tempString01, tempString02;
+      vector<Process> vP;
+      while (getline(infile,inputLine)){
+        stringstream ss(inputLine);
+        getline(ss,ProcID, ',');
+        getline(ss,tempString01, ',');
+        ProcBurstTime = stoi(tempString01);
+        getline(ss,tempString02);
+        ProcPriority = stoi(tempString02);
+        Process Pnew = {ProcID, ProcBurstTime, ProcPriority};
+        vP.push_back(Pnew);
       }
-      Process listOfProc[countLines];
-      while (infile){
-        int num = 0;
-        infile >> listOfProc[num].id;
-        infile >> listOfProc[num].bt;
-        infile >> listOfProc[num].pr;
-        num++;
+      Process listOfProc[vP.size()];
+      for(int i = 0; i < vP.size();i++){
+        listOfProc[i] = vP[i];
       }
       int n = sizeof listOfProc / sizeof listOfProc[0];
       calculate(listOfProc, n);
       infile.close();
+
     }
       else{
+        srand (time(0));
         int randomNumberOfProcesses = rand() % 4 + 2;
         Process listOfProc[randomNumberOfProcesses];
         genListOfProcess(listOfProc, randomNumberOfProcesses);
